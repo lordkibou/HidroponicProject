@@ -375,18 +375,15 @@ digitalWrite(power_pin, HIGH);
   humedad = 100*Seco/(Seco-Mojado)-adc0*100/(Seco-Mojado); //% de humedad
   salinidad = 100*AguaNormal/(AguaNormal-AguaSalada)-adc*100/(AguaNormal-AguaSalada); //% de salinidad
 
- if(humedad>=100)
+ if(humedad>=100){
     humedad=100; //que no sobrepase el 100%
-   
-  if(humedad<=0)
+ }
+ else if(humedad<=0){
     humedad=0;  //que no baje del 0%
-
-  if(salinidad>=100)
+ }
+ else if(salinidad>=100){
     salinidad=100; //que no sobrepase el 100%
-   
-  if(salinidad<=0)
-    salinidad=0;  //que no baje del 0%
-
+ }
  digitalWrite( power_pin, LOW );
  
 // Lo que aparecerá en el Monitor Serie:
@@ -493,13 +490,13 @@ double lightReading(int pin){ //Funcion de intervalos
       if(val<=21 && val>=3){
        Serial.println("Sensor Tapado/obstruido");
       }
-      if(val<=450 && val>21){
+      else if(val<=450 && val>21){
        Serial.println("Sombreado/Nubes");
       }
-      if(val>450 && val<2100){
+      else if(val>450 && val<2100){
         Serial.println("Soleado");
        }
-      if(val>=2100){
+      else if(val>=2100){
         Serial.println("Demasiada luz para el huerto");
       }
       valF=(4.096*10/32767)*val;
