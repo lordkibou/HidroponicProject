@@ -11,6 +11,16 @@
 #define printInterval 800
 #define ArrayLength 40 
 
+/* Programa prueba GPS UBLOX-6M
+ *  Conexiones GPIO 12--> TX
+ *             GPIO 13--> RX
+ */
+
+//#include <TinyGPS++.h> //Libreria TinyGPS
+
+//#include <SoftwareSerial.h> //Libreria para el UART del GPS
+//SoftwareSerial gps(12,13);
+
 //definiciones wifi
 
 // Comentar/Descomentar para ver mensajes de depuracion en monitor serie y/o respuesta del HTTP server
@@ -99,6 +109,8 @@ int power_pin = 5; // Alimentación de la sonda
 
 double gramos = 0; //Gramos sal
 
+//GPS
+char dato=' ';
 
 //Construir ADS1115
   
@@ -265,6 +277,13 @@ void setup() {
   Serial.println("Inicializando el medidor de pH");
   delay(1000);
   Serial.println("Inicializando el sensor de Temperatura");
+
+//GPS           
+ //gps.begin(9600); 
+// Serial.println("Inicializando el GPS...");
+ //delay(500);
+ //Serial.println("Esperando datos");
+//GPS
 
   //Inicializamos el ADS1115
    ads1115.begin(); //Salinidad ADC 
@@ -549,6 +568,18 @@ void internetH1(int humedad, int salinidad, double temp,float pHValue, double va
   
 }
 
+/*void gpsFunc(){//Función para mostrar las coordenadas
+  //for(int i=0;i<=70;i++){
+    if(gps.available())
+    dato=gps.read();
+    if(dato=='$'){
+      Serial.print("\n");
+      }
+    Serial.print(dato);
+    delay(50);
+    }
+  }//gps()
+*/
 void loop(void) {
 int humedad=0;
 // Calibrado (para que el programa tenga un uso más genérico y no único al sensor que calibramos una vez)
@@ -561,6 +592,8 @@ double temp = temperatura(2);
 float pHValue = phFuncion(1);
 
 double valF = lightReading(3); //Función sensor iluminosidad,PIN 3 INT
+
+//gpsFunc();
 
 internetH1(humedad, salinidad, temp, pHValue, valF);    
 
