@@ -6,7 +6,7 @@
 #include <ESP8266WiFi.h> //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 //tension del sensor pH 3,3 a 5,5v
 #define channelValue 0
-#define Offset +0.12 //Definimos el Offset
+#define Offset +2.25 //Definimos el Offset
 #define samplingInterval 20
 #define printInterval 800
 #define ArrayLength 40 
@@ -16,10 +16,10 @@
  *             GPIO 13--> RX
  */
 
-//#include <TinyGPS++.h> //Libreria TinyGPS
+#include <TinyGPS++.h> //Libreria TinyGPS
 
-//#include <SoftwareSerial.h> //Libreria para el UART del GPS
-//SoftwareSerial gps(12,13);
+#include <SoftwareSerial.h> //Libreria para el UART del GPS
+SoftwareSerial gps(12,13);
 
 //definiciones wifi
 
@@ -253,7 +253,7 @@ void setup() {
   //Inicializamos el Monitor Serie
     //inicializamos WIFI
   #ifdef PRINT_DEBUG_MESSAGES
-    Serial.begin(9600);
+    Serial.begin(115200);
   #endif
   
   connectWiFi();
@@ -279,10 +279,10 @@ void setup() {
   Serial.println("Inicializando el sensor de Temperatura");
 
 //GPS           
- //gps.begin(9600); 
-// Serial.println("Inicializando el GPS...");
- //delay(500);
- //Serial.println("Esperando datos");
+ gps.begin(9600); 
+ Serial.println("Inicializando el GPS...");
+ delay(500);
+ Serial.println("Esperando datos");
 //GPS
 
   //Inicializamos el ADS1115
@@ -403,6 +403,9 @@ digitalWrite(power_pin, HIGH);
  else if(salinidad>=100){
     salinidad=100; //que no sobrepase el 100%
  }
+ else if(salinidad<0){
+  salinidad=0;
+  }
  digitalWrite( power_pin, LOW );
  
 // Lo que aparecerá en el Monitor Serie:
@@ -568,18 +571,18 @@ void internetH1(int humedad, int salinidad, double temp,float pHValue, double va
   
 }
 
-/*void gpsFunc(){//Función para mostrar las coordenadas
-  //for(int i=0;i<=70;i++){
+void gpsFunc(){//Función para mostrar las coordenadas
+  for(int i=0;i<=70;i++){
     if(gps.available())
-    dato=gps.read();
-    if(dato=='$'){
-      Serial.print("\n");
+      dato=gps.read();
+      if(dato=='$'){
+        Serial.print("\n");
       }
     Serial.print(dato);
     delay(50);
     }
   }//gps()
-*/
+
 void loop(void) {
 int humedad=0;
 // Calibrado (para que el programa tenga un uso más genérico y no único al sensor que calibramos una vez)
@@ -593,7 +596,7 @@ float pHValue = phFuncion(1);
 
 double valF = lightReading(3); //Función sensor iluminosidad,PIN 3 INT
 
-//gpsFunc();
+gpsFunc();
 
 internetH1(humedad, salinidad, temp, pHValue, valF);    
 
